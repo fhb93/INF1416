@@ -1,0 +1,5 @@
+Tutorial para instalar oracle jdk
+https://docs.datastax.com/en/jdk-install/doc/jdk-install/installOracleJdkDeb.html
+
+Tutorial para tar gzip
+https://sourcedigit.com/20839-extract-install-tar-gz-files-ubuntu/
