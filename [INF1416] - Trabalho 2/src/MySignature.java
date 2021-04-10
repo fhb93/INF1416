@@ -15,14 +15,23 @@ public class MySignature {
 	
 	private Cipher cipherPattern; 
 	private MessageDigest messageDig;
+	private static MySignature instance = new MySignature();
+	
 	
 	//Métodos da classe MySignature - getInstance, initSign, update, sign, initVerify e verify
 	
+	public static MySignature getInstance() {
+		return instance;
+	}
 	
 	//Método getInstance() -> Instancia a classe MySignature e gera as chaves RSA
-	public MySignature() throws NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException {
-		this.cipherPattern = Cipher.getInstance("RSA");
-		this.messageDig = MessageDigest.getInstance("MD5");	
+	private MySignature() {
+		try {
+			this.cipherPattern = Cipher.getInstance("RSA");
+			this.messageDig = MessageDigest.getInstance("MD5");	
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException e ){
+			
+		} 
 	}
 	
 	//Método initSign() -> Inicializa a assinatura digital
@@ -62,5 +71,4 @@ public class MySignature {
 	
 	    System.out.println( digitalSignature.toString() );
 	}
-
 }
