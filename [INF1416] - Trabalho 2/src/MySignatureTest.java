@@ -1,56 +1,92 @@
 import java.security.*;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 /**
  * INF1416 - Trabalho 2
  *  Dupla:
- * 		Felipe Holanda Bezerra - Matrícula:
- * 		Nathalia Mariz de Almeida Salgado Inácio - Matrícula:
+ * 		Felipe Holanda Bezerra - Matrícula: 1810238
+ * 		Nathalia Mariz de Almeida Salgado Inácio - Matrícula: 1520763
 */
 
 public class MySignatureTest {
 	
-	private KeyPairGenerator generatedKey;
-	private KeyPair keyPair;
-	private PrivateKey privateKey;
-	private PublicKey publicKey;
-
 	public static void main(String[] args) {
 		
-		System.out.println("Recebendo a string e o padrão de assinatura.");
-		MySignatureTest test = new MySignatureTest();
-		
-		// Gerando o par de chaves RSA
-		test.generateKeys(args[0], args[1]);
-			
-		
-		//TODO:
-		/**
-		 * Receber a string e o padrao da assinatura na linha de comando
-		 * Gerar o par de chaves RSA
-		 * Instanciar e usar os métodos da classe MySignature para assinar o texto plano com chave privada
-		 * Verificar a assinatura com a chave publica no padrão solicitado
-		 * Imprimir, na saída padrão, todos os passos executados durante a geração e verificação da assinatura digital
-		 * Imprimir, na saída padrão, o resumo de mensagem (digest) e a assinatura digital no formato hexadecimal
-		*/
-	}
-	
-	private boolean generateKeys(String str, String pattern) {
-		System.out.println("Gerando as chaves...");
-		try {
-			generatedKey = KeyPairGenerator.getInstance("RSA");
-			generatedKey.initialize(1024);
-			keyPair = generatedKey.generateKeyPair();
-			publicKey = keyPair.getPublic();
-			privateKey = keyPair.getPrivate();
-			System.out.println("Par de chaves assimetricas gerado:");
-			System.out.println("Chave publica:" + publicKey);
-			System.out.println("Chave privada:" + privateKey);
-
-			return true;
-		} catch (NoSuchAlgorithmException e) {
-			return false;
+		if(args.length != 2)
+		{
+			System.out.println("Uso: java MySignatureTest <\"plain Text\"> <Algorithm>");
+			System.exit(1);
 		}
 		
-	}
+		System.out.println("Recebendo a string e o padrão de assinatura.");
+		
+		if(args[1].contains("RSA") == false)
+		{
+			System.out.println("Apenas oferecemos suporte ao RSA!");
+			System.exit(1);
+		}
+		
+		//Para casos com a nomenclatura do BouncyCastle (sem o -)
+		if(args[1].contains("SHA") == true && args[1].contains("-") == false)
+		{
+			args[1] = args[1].replace("SHA", "SHA-");
+		}
+		
+		//Separa o nome com os padrões de assinatura 
+		String split = args[1].split("with")[0];
+		
+		System.out.println("Metodo de assinatura: " + split);
+		
+		MySignature.getInstance().setChosenAlgorithm(split);
+		
+		MySignature.getInstance().setPlainText(args[0]);
+		
+		try {
+			MySignature.getInstance().initSign();
+		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+			System.out.println("Uma " + e.getClass().getName() + " foi gerada! Abortando.");
+			System.exit(1);
+		}
+		
+		try {
+			MySignature.getInstance().update();
+		} catch (NoSuchAlgorithmException e) {
+			System.out.println("Uma " + e.getClass().getName() + " foi gerada! Abortando.");
+			System.exit(1);
+		}
+		
+		try {
+			
+			MySignature.getInstance().sign();
 
+			
+		} catch (IllegalBlockSizeException | BadPaddingException e1) {
+			System.out.println("Uma " + e1.getClass().getName() + " foi gerada! Abortando.");
+			System.exit(1);
+		}
+		
+		
+		
+		try {
+			MySignature.getInstance().initVerify();
+			
+		}catch(InvalidKeyException e2)
+		{
+			System.out.println("Uma " + e2.getClass().getName() + " foi gerada! Abortando.");
+			System.exit(1);
+		}
+		
+		try {
+			MySignature.getInstance().verify();
+			
+		} catch (IllegalBlockSizeException | BadPaddingException e3) {
+			System.out.println("Uma " + e3.getClass().getName() + " foi gerada! Abortando.");
+			System.exit(1);
+		}
+			
+	}
+	
 }
