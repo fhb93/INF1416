@@ -14,11 +14,11 @@ public class User {
     private int consultation;
 
     
-    public void getIsBlocked(boolean isUserBlocked) {
+    public void setIsBlocked(boolean isUserBlocked) {
         this.isBlocked = isUserBlocked;
     }
     
-    public boolean setIsBlocked() {
+    public boolean getIsBlocked() {
         return isBlocked;
     }
     
