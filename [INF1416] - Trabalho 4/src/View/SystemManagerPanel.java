@@ -1,20 +1,20 @@
 package View;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import Model.Group;
+import Model.MySQL;
 import Model.User;
 
 public class SystemManagerPanel {
 
 	public List<String> header;
 
-
 	private static SystemManagerPanel mainPanel;
-	
-	
+
 	public SystemManagerPanel(User user)
 	{
 		User thisUser = user;
@@ -32,22 +32,44 @@ public class SystemManagerPanel {
 			System.out.println(str);
 		}
 	}
-	
+
 	public void showExitMessage(User user)
 	{
 		User thisUser = user;
-		
+
+		showHeaderPanel();
+
+		System.out.println("Total de acessos do usuário: " + thisUser.getAccess());
+
+		System.out.println("Saída do sistema");
+
+		System.out.println("Até a próxima!");
+
+		System.out.println("1 - Sair\t\t2 - Voltar Menu Principal");
+	}
+
+	public void RegisterNewUser()
+	{
 		showHeaderPanel();
 		
-		System.out.println("Total de acessos do usuário: " + thisUser.getAccess());
+		try {
+
+			//MySQL.getInstance();
+			
+			MySQL.createConnection();
+
+			MySQL.createStatement();
+			
+			ResultSet set = MySQL.executeQuery(String.format("select count(*) from usuarios;"));
+			
+			System.out.println(set.toString());
+			
+			System.out.println("Total de usuários do sistema: " );
+		} catch(Exception e)
+		{
+			System.out.println("Erro: " + e.getMessage());
+		}
 		
-		System.out.println("Saída do sistema");
-		
-		System.out.println("Até a próxima!");
-		
-		System.out.println("1 - Sair\t\t2 - Voltar Menu Principal");
-	
-	
 	}
 
 	public static void main(String[] args) {
@@ -62,12 +84,11 @@ public class SystemManagerPanel {
 		//headerPanel.showHeaderPanel();
 
 		mainPanel.core(user);
-		
-		
 
-		
 	}
-	
+
+
+
 
 	private void core(User user)
 	{		
@@ -83,24 +104,25 @@ public class SystemManagerPanel {
 			System.out.print("Comando: ");
 
 			command = sc.next();
-			
+
 			switch(command)
 			{
 			case "1":
+				RegisterNewUser();
 				break;
-			
+
 			case "2":
 				break;
-				
+
 			case "3":
 				break;
-				
+
 			case "4":
 				// Sair do sistema
 				mainPanel.showExitMessage(currentUser);
-				
+
 				command = sc.next();
-				
+
 				if(command.contentEquals("1"))
 				{
 					sc.close();
@@ -109,15 +131,15 @@ public class SystemManagerPanel {
 				else {
 					mainPanel.core(currentUser);
 				}
-				
+
 				break;
-				
-				default:
-					
+
+			default:
+
 			}
-			
+
 		}
 		while(command.length() != 0);
 	}
-	
+
 }
